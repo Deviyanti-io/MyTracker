@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wawasan - MyCycle</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fff0f5;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #ff6fa0;
+      color: white;
+      padding: 25px 20px;
+      text-align: center;
+      font-size: 1.5rem;
+    }
+    .container {
+      max-width: 800px;
+      margin: 30px auto;
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+    h2 {
+      color: #d6336c;
+      margin-top: 0;
+    }
+    .info-box {
+      background-color: #ffe4ec;
+      border-left: 5px solid #d6336c;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+    }
+    ul.tips {
+      padding-left: 20px;
+    }
+    .tips li {
+      margin-bottom: 8px;
+    }
+    .wawasan-btn {
+      display: block;
+      width: fit-content;
+      margin: 40px auto 10px auto;
+      padding: 12px 24px;
+      background-color: #d6336c;
+      color: white;
+      border-radius: 8px;
+      font-weight: bold;
+      text-decoration: none;
+      transition: background 0.3s ease;
+      text-align: center;
+    }
+    .wawasan-btn:hover {
+      background-color: #b52b59;
+    }
+    .selesai-btn {
+      display: block;
+      width: fit-content;
+      margin: 10px auto 40px auto;
+      padding: 12px 24px;
+      background-color: #28a745;
+      color: white;
+      border-radius: 8px;
+      font-weight: bold;
+      text-decoration: none;
+      transition: background 0.3s ease;
+      text-align: center;
+    }
+    .selesai-btn:hover {
+      background-color: #1e7e34;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    Wawasan Menstruasi
+  </header>
+
+  <div class="container">
+    <h2>Perkiraan Menstruasi Berikutnya</h2>
+    <div class="info-box">
+      <p><strong>Perkiraan tanggal:</strong> <span id="prediksiTanggal">–</span></p>
+      <p><small>(Berdasarkan data siklus terakhir kamu)</small></p>
+    </div>
+
+    <h2>Statistik Siklus</h2>
+    <div class="info-box">
+      <p><strong>Durasi rata-rata:</strong> <span id="rataDurasi">–</span> hari</p>
+      <p><strong>Jumlah siklus tercatat:</strong> <span id="jumlahSiklus">–</span></p>
+    </div>
+
+    <h2>Tips Saat Menstruasi</h2>
+    <ul class="tips">
+      <li>Konsumsi cukup air dan makanan bergizi.</li>
+      <li>Gunakan pembalut/cup/produk menstruasi yang nyaman.</li>
+      <li>Catat gejala atau mood agar lebih sadar pola tubuh.</li>
+      <li>Beristirahat cukup dan hindari stres berlebihan.</li>
+    </ul>
+
+    <a href="depan.html" class="wawasan-btn">← Kembali ke Beranda</a>
+    <a href="selesai.html" class="selesai-btn">Selesai</a>
+  </div>
+
+  <script>
+    // Ambil data siklus dari localStorage
+    const siklusData = JSON.parse(localStorage.getItem("cycleData")) || [];
+
+    function hitungStatistik() {
+      if (siklusData.length < 2) {
+        document.getElementById("rataDurasi").textContent = "Data belum cukup";
+        document.getElementById("jumlahSiklus").textContent = siklusData.length;
+        document.getElementById("prediksiTanggal").textContent = "Data belum cukup";
+        return;
+      }
+
+      const durasiList = siklusData.map(entry => {
+        const start = new Date(entry.start);
+        const end = new Date(entry.end);
+        return (end - start) / (1000 * 60 * 60 * 24);
+      });
+
+      const totalDurasi = durasiList.reduce((a, b) => a + b, 0);
+      const rataDurasi = Math.round(totalDurasi / durasiList.length);
+
+      const lastEnd = new Date(siklusData[siklusData.length - 1].end);
+      const nextStart = new Date(lastEnd.getTime() + 28 * 24 * 60 * 60 * 1000);
+
+      document.getElementById("rataDurasi").textContent = rataDurasi;
+      document.getElementById("jumlahSiklus").textContent = siklusData.length;
+      document.getElementById("prediksiTanggal").textContent = nextStart.toLocaleDateString("id-ID");
+    }
+
+    hitungStatistik();
+  </script>
+</body>
+</html>
